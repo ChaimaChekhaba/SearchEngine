@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="UTF-8">
+    <title>Information retrieval using Pylucene</title>
+    {% load static %}
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+</head>
+<style>
+body {font-family: Arial, Helvetica, sans-serif;}
+* {box-sizing: border-box;}
+
+.form-inline {
+     flex-flow: row wrap;
+     align-items: center;
+}
+
+.form-inline label {
+     margin: 5px 10px 5px 0;
+}
+
+.form-inline input[type="text"] {
+    width: 700px;
+}
+
+
+.form-inline input {
+      vertical-align: middle;
+      margin: 5px 10px 5px 0;
+      padding: 10px;
+      background-color: #fff;
+      border: 1px solid #ddd;
+
+}
+
+.form-inline button {
+      padding: 10px 20px;
+      background-color: dodgerblue;
+      border: 1px solid #ddd;
+      color: white;
+      cursor: pointer;
+}
+
+.form-inline button:hover {
+      background-color: royalblue;
+}
+.container {
+    width: 1270px;
+    height: fit-content;
+}
+
+@media (max-width: 800px) {
+    .form-inline input {
+        margin: 10px 0;
+    }
+
+    .form-inline {
+         flex-direction: column;
+         align-items: stretch;
+    }
+}
+
+* {
+   box-sizing: border-box;
+}
+
+ul {
+   margin: 0;
+   padding: 0;
+}
+
+ul li {
+
+                    position: relative;
+                    padding: 12px 8px 12px 40px;
+                    list-style-type: none;
+                    background: #eee;
+                    font-size: 18px;
+                    transition: 0.2s;
+                    -webkit-user-select: none;
+                    -moz-user-select: none;
+                    -ms-user-select: none;
+                    user-select: none;
+}
+
+                  /* Set all odd list items to a different color (zebra-stripes) */
+                  ul li:nth-child(odd) {
+                    background: #f9f9f9;
+                  }
+
+                  /* Darker background-color on hover */
+                  ul li:hover {
+                    background: #ddd;
+                  }
+
+                  /* When clicked on, add a background color and strike out text */
+                  ul li.checked {
+                    background: #888;
+                    color: #fff;
+                  }
+
+
+                  ul li.checked::before {
+                    content: '';
+                    position: absolute;
+                    border-color: #fff;
+                    border-style: solid;
+                    border-width: 0 2px 2px 0;
+                    top: 10px;
+                    left: 16px;
+                    transform: rotate(45deg);
+                    height: 15px;
+                    width: 7px;
+                  }
+
+                  /* Style the close button */
+                  .close {
+                    position: absolute;
+                    right: 0;
+                    top: 0;
+                    padding: 12px 16px 12px 16px;
+                  }
+
+                  .close:hover {
+                    background-color: #f44336;
+                    color: white;
+                  }
+
+
+                  .header {
+                    background-color: #f44336;
+                    padding: 30px 40px;
+                    color: white;
+                    text-align: center;
+                  }
+
+                  /* Clear floats after the header */
+                  .header:after {
+                    content: "";
+                    display: table;
+                    clear: both;
+                  }
+
+                  /* Style the input */
+                  input   #id_query{
+                    margin: 0;
+                    border: none;
+                    border-radius: 0;
+                    width: 75%;
+                    padding: 10px;
+                    float: left;
+                    font-size: 16px;
+                  }
+
+
+                  .addBtn {
+                    padding: 10px;
+                    width: 25%;
+                    background: #d9d9d9;
+                    color: #555;
+                    float: left;
+                    text-align: center;
+                    font-size: 16px;
+                    cursor: pointer;
+                    transition: 0.3s;
+                    border-radius: 0;
+                  }
+
+                  .addBtn:hover {
+                    background-color: #bbb;
+                  }
+                  .line{
+                  width: 150px;
+                  height: 1px;
+                  border-bottom: 1px solid black;
+
+                  div.fixed {
+                    position: fixed;
+                    bottom: 0;
+                    right: 0;
+                    width: 300px;
+                    border: 3px solid #73AD21;
+                  }
+}
+</style>
+<body>
+<div class="container inline-block">
+    <form class="form-inline" method="post" action="/getdata/">
+        <div class="form-row">
+            {% csrf_token %}
+            <div class="fixed-top">
+                <div class="col-sm-3"><h2>Hello Pylucene </h2></div>
+                <br>
+                {{ form.query }}
+                <button>Search</button>
+            </div>
+        </div>
+        <br>
+        <div class="form-row">
+            <div class="col-sm-3">
+                <label>Cleaning</label><br>
+                {% for item in form.cleaning %}
+                    <input type="radio" value="{{item.data.value}}" name="{{item.data.name}}"  id="{{item.id_for_label}}" {% if item.data.selected %} checked{% endif %}>
+                    {{ item.choice_label }}
+                    <br>
+                {% endfor %}
+                <br>
+                <label>Similarity </label><br>
+                 {% for item in form.similarity %}
+                     <input type="radio" value="{{item.data.value}}" name="{{item.data.name}}"  id="{{item.id_for_label}}" {% if item.data.selected %} checked{% endif %}>
+                    {{ item.choice_label }}
+                    <br>
+                {% endfor %}
+                <br>
+                <label>Improving the IR system</label><br>
+                {% for item in form.improve %}
+                    <input type="radio" value="{{item.data.value}}" name="{{item.data.name}}"  id="{{item.id_for_label}}" {% if item.data.selected %} checked{% endif %}>
+                    {{ item.choice_label }}
+                    <br>
+                {% endfor %}
+
+            </div>
+            <div class="col-sm-8">
+                <form method="post" action="/getdata/">
+                    {%if documents %}<label> The obtained results <br></label>{% endif %}
+                    <br>
+                    {%for doc in documents %}
+                    <div class="form-row">
+                        <label> <a href="file://{{ doc.2 }}" target="_blank"> {{ doc.1 }} </a><br></label>
+                        <p> {{ doc.3|slice:"0:250" }}<br> <b>Score = </b>{{ doc.4 }}</p>
+                    </div>
+                    {% endfor %}
+                     <br>
+                     <br>
+                </form>
+            </div>
+        </div>
+    </form>
+
+</div>
+</body>
+</html>
